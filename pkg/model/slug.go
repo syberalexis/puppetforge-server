@@ -1,6 +1,6 @@
 package model
 
 type Slug struct {
-	uri  string `json:"uri"`
-	slug string `json:"slug"`
+	Uri      string `json:"uri"`
+	SlugName string `json:"slug"`
 }

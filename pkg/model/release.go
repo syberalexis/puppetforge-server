@@ -1,7 +1,5 @@
 package model
 
-import "time"
-
 type Release struct {
 	ReleaseInfo
 	Module          ModuleInfo  `json:"module"`
@@ -19,6 +17,6 @@ type Release struct {
 	Docs            interface{} `json:"docs"`
 	Tasks           []Task      `json:"tasks"`
 	Plans           []Plan      `json:"plans"`
-	UpdatedAt       time.Time   `json:"updated_at"`
+	UpdatedAt       string      `json:"updated_at"`
 	DeletedFor      interface{} `json:"deleted_for"`
 }
