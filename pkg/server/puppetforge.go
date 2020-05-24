@@ -16,7 +16,7 @@ func TestModel() {
 
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode != 204 {
+	if resp.StatusCode != 200 {
 		json.Unmarshal(body, &forgeError)
 	} else {
 		json.Unmarshal(body, &module)
