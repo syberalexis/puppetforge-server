@@ -1,29 +1,17 @@
 package server
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 
-	"github.com/syberalexis/puppetforge-server/pkg/model"
+	"github.com/syberalexis/puppetforge-server/pkg/bridge"
 )
 
 func TestModel() {
-	var module model.Module
-	var forgeError model.ForgeError
-	resp, _ := http.Get("https://forgeapi.puppet.com/v3/modules/maeq-thanos2")
+	bridge := bridge.ForgeBridge{Uri: "https://forgeapi.puppet.com"}
+	modules, err := bridge.ListModules(0, 0, "", "maeq", "", "", false, false, false, []string{}, "", "", "", 0, []string{}, false, false, false, []string{}, false, []string{}, []string{}, false)
 
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode != 200 {
-		json.Unmarshal(body, &forgeError)
-	} else {
-		json.Unmarshal(body, &module)
+	fmt.Println(err)
+	for _, module := range modules {
+		fmt.Println(module.SlugName)
 	}
-	fmt.Println(forgeError)
-	fmt.Println(module.Owner.Uri)
-	fmt.Println(module.Owner.SlugName)
-	fmt.Println(module.Owner.Username)
-	fmt.Println(module.Owner.GravatarId)
 }
