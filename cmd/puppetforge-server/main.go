@@ -8,7 +8,7 @@ func main() {
 	s := server.PuppetForge{
 		Host:     "127.0.0.1",
 		Port:     8080,
-		ForgeUri: "https://forgeapi.puppet.com/",
+		ForgeURI: "https://forgeapi.puppet.com/",
 	}
 	s.Run()
 	/*http.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
