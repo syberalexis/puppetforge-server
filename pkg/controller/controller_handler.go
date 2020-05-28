@@ -7,7 +7,7 @@ import (
 )
 
 type ControllerContext struct {
-	Bridge *bridge.ForgeBridge
+	Bridge *bridge.ForgeModuleBridge
 }
 
 type ControllerHandler struct {

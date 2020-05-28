@@ -1,30 +1,27 @@
 package bridge
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"strings"
 
 	"github.com/syberalexis/puppetforge-server/pkg/model"
 )
 
-type ForgeBridge struct {
-	Uri string
+// ForgeModuleBridge Bridge Puppet Forge's modules endpoints
+type ForgeModuleBridge struct {
+	URI string
 }
 
-// FetchModule method to fetch a module by his name from a Puppet forge server
-func (forge *ForgeBridge) FetchModule(name string) (module model.Module, err error) {
-	err = executeRequest(fmt.Sprintf("%s/v3/modules/%s", forge.Uri, name), &module)
+// FetchModule Returns data for a single Module resource identified by the module's slug value.
+func (forge *ForgeModuleBridge) FetchModule(name string) (module model.Module, err error) {
+	err = executeRequest(fmt.Sprintf("%s/v3/modules/%s", forge.URI, name), &module)
 	return
 }
 
-// ListModules method to list modules with search query
-func (forge *ForgeBridge) ListModules(limit uint, offset uint, sortBy string, query string, tag string, owner string, withTasks bool,
+// ListModules Returns a list of modules meeting the specified search criteria and filters. Results are paginated.
+func (forge *ForgeModuleBridge) ListModules(limit uint, offset uint, sortBy string, query string, tag string, owner string, withTasks bool,
 	withPlans bool, withPdk bool, endorsements []string, operatingsystem string, peRequirement string, puppetRequirement string,
-	withMinimumScore int, moduleGroups []string, showDeleted bool, hideDeprecated bool, onlyLatest bool, slugs []string, withHtml bool,
+	withMinimumScore int, moduleGroups []string, showDeleted bool, hideDeprecated bool, onlyLatest bool, slugs []string, withHTML bool,
 	includeFields []string, excludeFields []string, supported bool) (modules []model.Module, err error) {
 
 	var page model.Page
@@ -89,7 +86,7 @@ func (forge *ForgeBridge) ListModules(limit uint, offset uint, sortBy string, qu
 	if len(slugs) > 0 {
 		params = append(params, fmt.Sprintf("%s=%s", "slugs", strings.Join(slugs, ",")))
 	}
-	if withHtml {
+	if withHTML {
 		params = append(params, fmt.Sprintf("%s=%s", "with_html", "true"))
 	}
 	if len(includeFields) > 0 {
@@ -108,37 +105,7 @@ func (forge *ForgeBridge) ListModules(limit uint, offset uint, sortBy string, qu
 		queryParams = ""
 	}
 
-	err = executeRequest(fmt.Sprintf("%s/v3/modules%s", forge.Uri, queryParams), &page)
+	err = executeRequest(fmt.Sprintf("%s/v3/modules%s", forge.URI, queryParams), &page)
 	modules = page.Results
 	return
-}
-
-func executeRequest(uri string, result interface{}) error {
-	var forgeError model.ForgeError
-
-	// Execute request from Forge API
-	resp, err := http.Get(uri)
-	if err != nil {
-		return err
-	}
-
-	// Read Body
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
-	// Unmarshal module or error
-	if resp.StatusCode != 200 {
-		err = json.Unmarshal(body, &forgeError)
-		if err != nil {
-			return err
-		}
-		err = errors.New(fmt.Sprintf("%s :\n%s", forgeError.Message, strings.Join(forgeError.Errors, "\n")))
-		return err
-	} else {
-		err = json.Unmarshal(body, &result)
-		return err
-	}
 }
