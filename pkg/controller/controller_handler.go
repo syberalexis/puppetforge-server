@@ -4,10 +4,13 @@ import (
 	"net/http"
 
 	"github.com/syberalexis/puppetforge-server/pkg/bridge"
+	"github.com/syberalexis/puppetforge-server/pkg/forge"
 )
 
 type ControllerContext struct {
-	Bridge *bridge.ForgeModuleBridge
+	Bridge         *bridge.ForgeModuleBridge
+	ModuleService  *forge.ModuleService
+	ReleaseService *forge.ReleaseService
 }
 
 type ControllerHandler struct {

@@ -12,7 +12,11 @@ func FetchModule(context *ControllerContext, w http.ResponseWriter, r *http.Requ
 	prepareResponse(w)
 	slugModule := extractVariables(r)
 
-	module, err := context.Bridge.FetchModule(slugModule)
+	module, err := context.ModuleService.GetModule(slugModule)
+	if err != nil {
+		module, err = context.Bridge.FetchModule(slugModule)
+	}
+
 	if err != nil {
 		json.NewEncoder(w).Encode(model.ForgeError{Message: "500 : Bridge error", Errors: []string{err.Error()}})
 		w.WriteHeader(http.StatusInternalServerError)
