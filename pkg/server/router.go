@@ -11,8 +11,6 @@ func NewRouter(context *controller.ControllerContext) *mux.Router {
 	// StrictSlash is true => redirect /cars/ to /cars
 	router := mux.NewRouter().StrictSlash(true)
 
-	// React App
-	router.PathPrefix("/").Handler(&spa.SpaHandler{StaticPath: "web/build", IndexPath: "index.html"})
 	// Module endpoints
 	router.Methods("GET").Path("/v3/modules/{module_slug}").Name("Get Module").Handler(&controller.ControllerHandler{context, controller.FetchModule})
 	router.Methods("DELETE").Path("/v3/modules/{module_slug}").Name("Delete Module").Handler(&controller.ControllerHandler{context, controller.DeleteModule})
@@ -26,6 +24,8 @@ func NewRouter(context *controller.ControllerContext) *mux.Router {
 	router.Methods("GET").Path("/v3/releases/{release_slug}/plans").Name("List module release plans").Handler(&controller.ControllerHandler{context, controller.ListReleasePlans})
 	router.Methods("GET").Path("/v3/releases/{release_slug}/plans/{plan_name}").Name("Fetch module release plan").Handler(&controller.ControllerHandler{context, controller.FetchReleasePlan})
 	router.Methods("GET").Path("/v3/files/{filename}").Name("Download module release").Handler(&controller.ControllerHandler{context, controller.DownloadRelease})
+	// React App
+	router.PathPrefix("/").Handler(&spa.SpaHandler{StaticPath: "web/build", IndexPath: "index.html"})
 
 	return router
 }

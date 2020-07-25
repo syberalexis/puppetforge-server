@@ -13,8 +13,8 @@ type ForgeModuleBridge struct {
 }
 
 // FetchModule Returns data for a single Module resource identified by the module's slug value.
-func (forge *ForgeModuleBridge) FetchModule(name string) (module model.Module, err error) {
-	err = executeRequest(fmt.Sprintf("%s/v3/modules/%s", forge.URI, name), &module)
+func (forge *ForgeModuleBridge) FetchModule(name string) (module *model.Module, err error) {
+	err = executeRequest(fmt.Sprintf("%s/v3/modules/%s", forge.URI, name), module)
 	return
 }
 
@@ -30,10 +30,10 @@ func (forge *ForgeModuleBridge) ListModules(limit uint, offset uint, sortBy stri
 
 	// Format query parameters
 	if limit > 0 {
-		params = append(params, fmt.Sprintf("%s=%s", "limit", string(limit)))
+		params = append(params, fmt.Sprintf("%s=%d", "limit", limit))
 	}
 	if offset > 0 {
-		params = append(params, fmt.Sprintf("%s=%s", "offset", string(offset)))
+		params = append(params, fmt.Sprintf("%s=%d", "offset", offset))
 	}
 	if sortBy != "" {
 		params = append(params, fmt.Sprintf("%s=%s", "sort_by", sortBy))
@@ -69,7 +69,7 @@ func (forge *ForgeModuleBridge) ListModules(limit uint, offset uint, sortBy stri
 		params = append(params, fmt.Sprintf("%s=%s", "puppet_requirement", puppetRequirement))
 	}
 	if withMinimumScore > 0 {
-		params = append(params, fmt.Sprintf("%s=%s", "with_minimum_score", string(withMinimumScore)))
+		params = append(params, fmt.Sprintf("%s=%d", "with_minimum_score", withMinimumScore))
 	}
 	if len(moduleGroups) > 0 {
 		params = append(params, fmt.Sprintf("%s=%s", "module_groups", strings.Join(moduleGroups, ",")))
