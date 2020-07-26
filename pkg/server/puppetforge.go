@@ -23,6 +23,7 @@ func (puppetforge *PuppetForge) Run() {
 		Bridge:         &bridge.ForgeModuleBridge{URI: puppetforge.ForgeURI},
 		ModuleService:  &forge.ModuleService{},
 		ReleaseService: &forge.ReleaseService{},
+		Database:       &forge.Database{},
 	})
 
 	log.Infof("Server is listen on %s:%d", puppetforge.Host, puppetforge.Port)

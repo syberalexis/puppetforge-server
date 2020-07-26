@@ -9,8 +9,8 @@ func (databse Database) AddRelease(release model.Release) bool {
 	return false
 }
 
-func (databse Database) ListModules() []model.Module {
-	return []model.Module{}
+func (databse Database) ListModules() ([]model.Module, error) {
+	return []model.Module{model.Module{}}, nil
 }
 
 func (databse Database) ListReleases() []model.Release {

@@ -8,9 +8,11 @@ import (
 )
 
 type ControllerContext struct {
-	Bridge         *bridge.ForgeModuleBridge
-	ModuleService  *forge.ModuleService
-	ReleaseService *forge.ReleaseService
+	Bridge           *bridge.ForgeModuleBridge
+	ModuleService    *forge.ModuleService
+	ReleaseService   *forge.ReleaseService
+	Database         *forge.Database
+	CopyRemotToLocal bool
 }
 
 type ControllerHandler struct {

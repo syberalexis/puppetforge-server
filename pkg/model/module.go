@@ -16,3 +16,11 @@ type Module struct {
 	HomepageUrl    string        `json:"homepage_url"`
 	IssuesUrl      string        `json:"issues_url"`
 }
+
+func (module *Module) Equals(m *Module) bool {
+	if m != nil {
+		return module.SlugName == m.SlugName
+	}
+
+	return false
+}

@@ -19,6 +19,11 @@ func FetchModule(context *ControllerContext, w http.ResponseWriter, r *http.Requ
 	module, err := context.ModuleService.GetModule(slugModule)
 	if module == nil {
 		module, err = context.Bridge.FetchModule(slugModule)
+
+		// Save module in local
+		if context.CopyRemotToLocal {
+
+		}
 	}
 
 	if err != nil {
@@ -101,16 +106,36 @@ func ListModules(context *ControllerContext, w http.ResponseWriter, r *http.Requ
 		supported = false
 	}
 
-	// TODO Search from local database
+	// Search local modules
+	localModules, err1 := context.Database.ListModules()
 
-	module, err := context.Bridge.ListModules(uint(limit), uint(offset), sortBy, query, tag, owner, withTasks, withPlans, withPdk, endorsements, operatingsystem,
+	// Search remote modules
+	remoteModules, err2 := context.Bridge.ListModules(uint(limit), uint(offset), sortBy, query, tag, owner, withTasks, withPlans, withPdk, endorsements, operatingsystem,
 		peRequirement, puppetRequirement, int(withMinimumScore), moduleGroups, showDeleted, hideDeprecated, onlyLatest,
 		slugs, withHTML, includeFields, excludeFields, supported)
-	if err != nil {
-		json.NewEncoder(w).Encode(model.ForgeError{Message: "500 : Bridge error", Errors: []string{err.Error()}})
+
+	// Merge arrays
+	modules := make([]model.Module, len(remoteModules))
+	copy(modules, remoteModules)
+	for _, local := range localModules {
+		contained := false
+		for _, remote := range remoteModules {
+			if remote.Equals(&local) {
+				contained = true
+				break
+			}
+		}
+
+		if !contained {
+			modules = append(modules, local)
+		}
+	}
+
+	if err1 != nil && err2 != nil {
+		json.NewEncoder(w).Encode(model.ForgeError{Message: "500 : Bridge error", Errors: []string{err1.Error(), err2.Error()}})
 		w.WriteHeader(http.StatusInternalServerError)
 	} else {
-		json.NewEncoder(w).Encode(module)
+		json.NewEncoder(w).Encode(modules)
 		w.WriteHeader(http.StatusOK)
 	}
 }
